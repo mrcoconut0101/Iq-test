@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Life Smarts Test</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--text:#1d1d1f;--muted:#6b6b70;--accent:#2f6fde;--sel:#e6eefc;--border:#dcdce0}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1f1f23;--text:#ededf0;--muted:#a0a0a8;--accent:#6ea0ff;--sel:#24324d;--border:#33333a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:640px;margin:0 auto;padding:24px 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+h1{margin:0 0 8px;font-size:1.6rem}
+.muted{color:var(--muted)}
+.bar{height:6px;background:var(--border);border-radius:3px;margin-bottom:18px;overflow:hidden}
+.bar div{height:100%;background:var(--accent);transition:width .3s}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.on{background:var(--sel);border-color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.tag{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:600}
+.cat{margin:14px 0}
+.cat .bar{margin:4px 0 2px}
+.big{font-size:3rem;font-weight:700;margin:4px 0}
+</style>
+</head>
+<body>
+<main><div class="card" id="app"></div>
+<p class="muted" style="font-size:.85rem;text-align:center;margin-top:16px">Just for fun and self-reflection — not a clinical or scientific assessment.</p></main>
+<script>
+// Each option scores 0–3. Higher = wiser real-world choice.
+const Q=[
+{c:"Emotional intelligence",q:"A coworker snaps at you in a meeting over something minor. You…",o:[["Snap back so they know they can't talk to you like that",0],["Stay quiet and complain about them to others later",1],["Stay calm, then privately ask if everything's okay",3],["Ignore it and pretend it never happened",1]]},
+{c:"Emotional intelligence",q:"A friend tells you they just lost their job. The best first response is…",o:[["\"Here's what you should do next…\"",1],["\"That's rough. How are you feeling about it?\"",3],["\"At least you have savings, right?\"",0],["Change the subject to keep things light",0]]},
+{c:"Emotional intelligence",q:"You notice you're getting really angry during an argument. You…",o:[["Push through and win the argument",0],["Ask for a short break to cool down, then come back",3],["Walk out without saying anything",1],["Say whatever comes to mind — honesty matters",0]]},
+{c:"Money sense",q:"You get an unexpected $2,000 bonus. You have $1,500 in credit card debt at 24% interest. You…",o:[["Buy that thing you've been wanting",0],["Put it all in a savings account",1],["Pay off the card, save the rest",3],["Invest it all in a trending stock",0]]},
+{c:"Money sense",q:"A stranger online offers a \"guaranteed\" 30% monthly return. You…",o:[["Invest a small amount to test it",1],["Recognize it as a likely scam and walk away",3],["Invest big — fortune favors the bold",0],["Ask them for proof, then decide",1]]},
+{c:"Money sense",q:"Your car needs a $600 repair right when rent is due. What would have helped most?",o:[["A higher credit limit",1],["An emergency fund built up over time",3],["A payday loan service on speed dial",0],["Nothing — bad luck is just bad luck",0]]},
+{c:"Problem solving",q:"You've been stuck on a work problem for two hours. You…",o:[["Keep grinding — quitting is weakness",1],["Take a short break, then ask someone for a fresh view",3],["Give up and move on to something else for good",0],["Wait for someone to notice you're stuck",0]]},
+{c:"Problem solving",q:"You have five tasks due and time for only three. You…",o:[["Do the easiest ones first",1],["Work late every night until they're all done",1],["Rank by impact and deadline, then tell people early about the rest",3],["Do a little of each so all are partly done",0]]},
+{c:"Problem solving",q:"A plan you made isn't working. The smartest move is…",o:[["Stick with it — consistency is key",0],["Figure out why it's failing and adjust",3],["Scrap everything and start from zero",1],["Blame whoever gave you bad info",0]]},
+{c:"Self-control",q:"You planned to study tonight but friends invite you out. Your exam is tomorrow. You…",o:[["Go out — you only live once",0],["Study first, join them later if there's time",3],["Stay home but scroll your phone feeling bad",1],["Go out and study at 2am",0]]},
+{c:"Self-control",q:"You want to get fit. Which approach tends to work best?",o:[["Go hard every day for two weeks",1],["Start small and build a habit you can keep",3],["Wait until you feel motivated",0],["Buy expensive gear to commit yourself",1]]},
+{c:"Self-control",q:"Someone posts a rude comment about you online. You…",o:[["Write a long, cutting reply",0],["Ignore or block — it's not worth your energy",3],["Rally friends to pile on them",0],["Stew about it all day",1]]},
+{c:"Social skills",q:"At a party where you know no one, you…",o:[["Stay on your phone in a corner",0],["Ask someone a simple question about themselves",3],["Talk mostly about your own achievements",1],["Leave after ten minutes",1]]},
+{c:"Social skills",q:"You realize you made a mistake that affected your team. You…",o:[["Hope no one notices",0],["Own it quickly and suggest a fix",3],["Explain why it wasn't really your fault",1],["Apologize over and over",1]]},
+{c:"Social skills",q:"A friend keeps asking to borrow money and rarely pays you back. You…",o:[["Keep lending — that's what friends do",0],["Kindly but clearly say you can't lend anymore",3],["Start avoiding them",1],["Post a vague message about fake friends",0]]},
+{c:"Adaptability",q:"Your company announces a big change that affects your role. You…",o:[["Complain loudly and resist it",0],["Learn what's changing and look for ways to grow",3],["Immediately quit",0],["Keep your head down and hope it passes",1]]},
+{c:"Adaptability",q:"You get critical feedback on work you're proud of. You…",o:[["Defend every choice you made",0],["Listen, ask questions, and take what's useful",3],["Agree with everything to end the conversation",1],["Decide the person just doesn't like you",0]]},
+{c:"Adaptability",q:"You fail at something important. The most useful mindset is…",o:[["\"I'm just not good at this.\"",0],["\"What can I learn, and what will I try next?\"",3],["\"It was everyone else's fault.\"",0],["\"I'll never try that again.\"",0]]},
+{c:"Practical judgment",q:"You're signing a lease. You…",o:[["Sign quickly so you don't lose the place",0],["Read it fully and ask about anything unclear",3],["Skim the first page",1],["Have a friend sign it for you",0]]},
+{c:"Practical judgment",q:"Someone calls claiming to be your bank and asks for your PIN. You…",o:[["Give it — they know your name, so they're legit",0],["Hang up and call the number on your card",3],["Give part of it to be safe",0],["Ask them to verify by email",1]]}
+];
+const app=document.getElementById('app');let i=0,ans=[];
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function intro(){app.innerHTML=`<h1>Life Smarts Test</h1><p class="muted">20 everyday scenarios. No math, no trivia — just how you'd handle real life. Pick the answer closest to what you'd <em>actually</em> do.</p><p class="muted">Covers: emotional intelligence, money sense, problem solving, self-control, social skills, adaptability and practical judgment. Takes about 5 minutes.</p><button class="btn" onclick="i=0;ans=[];show()">Start</button>`}
+function show(){const q=Q[i];app.innerHTML=`<div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div class="tag">${q.c} · ${i+1}/${Q.length}</div><h2 style="font-size:1.15rem">${esc(q.q)}</h2>${q.o.map((o,k)=>`<button class="opt${ans[i]===k?' on':''}" onclick="pick(${k})">${esc(o[0])}</button>`).join('')}<div class="row"><button class="btn ghost" onclick="back()" ${i?'':'disabled'}>Back</button><button class="btn" onclick="next()" ${ans[i]==null?'disabled':''}>${i==Q.length-1?'See results':'Next'}</button></div>`}
+function pick(k){ans[i]=k;show()}
+function back(){if(i){i--;show()}}
+function next(){if(ans[i]==null)return;if(++i<Q.length)show();else result()}
+function result(){
+ const cats={};let tot=0;Q.forEach((q,n)=>{const s=q.o[ans[n]][1];tot+=s;(cats[q.c]??={s:0,m:0});cats[q.c].s+=s;cats[q.c].m+=3});
+ const pct=Math.round(tot/(Q.length*3)*100), score=Math.round(70+pct*0.6);
+ const lvl=pct>=85?["Life Navigator","You handle real-world situations with calm, clear judgment. People probably come to you for advice."]:pct>=65?["Solid Operator","Your instincts are good most of the time. A few areas could use polish, but you're set up well."]:pct>=45?["Work in Progress","You've got the basics, but some reactions may be costing you. Your weakest areas below are the best place to start."]:["Learning the Ropes","Life skills are learned, not fixed. Focus on one area below — small changes add up fast."];
+ const sorted=Object.entries(cats).sort((a,b)=>b[1].s/b[1].m-a[1].s/a[1].m);
+ app.innerHTML=`<div class="tag">Your result</div><div class="big">${score}</div><p class="muted" style="margin-top:-6px">Life Smarts score (${pct}% best choices)</p><h2 style="margin-bottom:4px">${lvl[0]}</h2><p>${lvl[1]}</p>${sorted.map(([c,v])=>{const p=Math.round(v.s/v.m*100);return `<div class="cat"><div style="display:flex;justify-content:space-between"><span>${c}</span><span class="muted">${p}%</span></div><div class="bar"><div style="width:${p}%"></div></div></div>`}).join('')}<p class="muted"><strong>Strongest:</strong> ${sorted[0][0]} · <strong>Grow next:</strong> ${sorted.at(-1)[0]}</p><button class="btn" onclick="intro()">Retake</button>`}
+intro();
+</script>
+</body>
+</html>
