@@ -6,7 +6,8 @@
 <title>Life Smarts Test</title>
 <style>
 :root{--bg:#f6f5f2;--card:#fff;--text:#1d1d1f;--muted:#6b6b70;--accent:#2f6fde;--sel:#e6eefc;--border:#dcdce0}
-@media (prefers-color-scheme:dark){:root{--bg:#141416;--card:#1f1f23;--text:#ededf0;--muted:#a0a0a8;--accent:#6ea0ff;--sel:#24324d;--border:#33333a}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141416;--card:#1f1f23;--text:#ededf0;--muted:#a0a0a8;--accent:#6ea0ff;--sel:#24324d;--border:#33333a}}
+:root[data-theme="dark"]{--bg:#141416;--card:#1f1f23;--text:#ededf0;--muted:#a0a0a8;--accent:#6ea0ff;--sel:#24324d;--border:#33333a}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,sans-serif}
 main{max-width:640px;margin:0 auto;padding:24px 16px}
